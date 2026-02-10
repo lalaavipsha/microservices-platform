@@ -17,7 +17,7 @@ A production-grade microservices platform deployed on AWS EKS with CI/CD, monito
                        |
                        v
 +--------------------------------------------------+
-|              EKS Cluster (test1)                  |
+|              EKS Cluster                   |       
 |                                                    |
 |  Frontend --> API Gateway --> Auth Service          |
 |                  |                                  |
