@@ -1,0 +1,97 @@
+{
+  "dashboard": {
+    "title": "Microservices Platform Dashboard",
+    "tags": ["microservices", "custom"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "title": "Request Rate by Service",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+        "targets": [
+          {
+            "expr": "sum(rate(api_gateway_requests_total[5m])) by (endpoint)",
+            "legendFormat": "{{endpoint}}"
+          }
+        ]
+      },
+      {
+        "title": "Request Latency P99",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.99, sum(rate(api_gateway_request_duration_seconds_bucket[5m])) by (le, endpoint))",
+            "legendFormat": "P99 {{endpoint}}"
+          }
+        ]
+      },
+      {
+        "title": "Orders Created",
+        "type": "stat",
+        "gridPos": {"h": 4, "w": 6, "x": 0, "y": 8},
+        "targets": [
+          {
+            "expr": "sum(order_service_orders_created_total)",
+            "legendFormat": "Total Orders"
+          }
+        ]
+      },
+      {
+        "title": "Payments Processed",
+        "type": "stat",
+        "gridPos": {"h": 4, "w": 6, "x": 6, "y": 8},
+        "targets": [
+          {
+            "expr": "sum(payment_service_payments_total) by (status)",
+            "legendFormat": "{{status}}"
+          }
+        ]
+      },
+      {
+        "title": "Auth Attempts",
+        "type": "stat",
+        "gridPos": {"h": 4, "w": 6, "x": 12, "y": 8},
+        "targets": [
+          {
+            "expr": "sum(auth_service_auth_attempts_total) by (result)",
+            "legendFormat": "{{result}}"
+          }
+        ]
+      },
+      {
+        "title": "Notifications Sent",
+        "type": "stat",
+        "gridPos": {"h": 4, "w": 6, "x": 18, "y": 8},
+        "targets": [
+          {
+            "expr": "sum(notification_service_notifications_total)",
+            "legendFormat": "Total"
+          }
+        ]
+      },
+      {
+        "title": "Upstream Service Errors",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 12},
+        "targets": [
+          {
+            "expr": "sum(rate(api_gateway_upstream_requests_total{status!='success'}[5m])) by (service, status)",
+            "legendFormat": "{{service}} - {{status}}"
+          }
+        ]
+      },
+      {
+        "title": "Pod Memory Usage",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 12},
+        "targets": [
+          {
+            "expr": "sum(container_memory_working_set_bytes{namespace='microservices'}) by (pod) / 1024 / 1024",
+            "legendFormat": "{{pod}} MB"
+          }
+        ]
+      }
+    ]
+  }
+}

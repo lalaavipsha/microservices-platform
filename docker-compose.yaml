@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    build:
+      context: ./services/api-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - AUTH_SERVICE_URL=http://auth-service:8081
+      - ORDER_SERVICE_URL=http://order-service:8082
+      - PAYMENT_SERVICE_URL=http://payment-service:8083
+      - NOTIFICATION_SERVICE_URL=http://notification-service:8084
+      - FLASK_DEBUG=true
+    depends_on:
+      - auth-service
+      - order-service
+      - payment-service
+      - notification-service
+    networks:
+      - microservices-network
+
+  auth-service:
+    build:
+      context: ./services/auth-service
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      - JWT_SECRET_KEY=local-dev-secret-key
+      - FLASK_DEBUG=true
+    networks:
+      - microservices-network
+
+  order-service:
+    build:
+      context: ./services/order-service
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+    environment:
+      - PAYMENT_SERVICE_URL=http://payment-service:8083
+      - NOTIFICATION_SERVICE_URL=http://notification-service:8084
+      - FLASK_DEBUG=true
+    networks:
+      - microservices-network
+
+  payment-service:
+    build:
+      context: ./services/payment-service
+      dockerfile: Dockerfile
+    ports:
+      - "8083:8083"
+    environment:
+      - FLASK_DEBUG=true
+    networks:
+      - microservices-network
+
+  notification-service:
+    build:
+      context: ./services/notification-service
+      dockerfile: Dockerfile
+    ports:
+      - "8084:8084"
+    environment:
+      - FLASK_DEBUG=true
+    networks:
+      - microservices-network
+
+networks:
+  microservices-network:
+    driver: bridge
